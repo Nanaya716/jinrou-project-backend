@@ -46,7 +46,7 @@ mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
 
 server:
-  port: 8081
+  port: 8080
   servlet:
     session:
       timeout: 0s  # 设置 session 超时为 0，表示禁用 session
