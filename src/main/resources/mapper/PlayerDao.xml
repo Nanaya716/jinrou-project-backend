@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.PlayerDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.Game.Player" id="PlayerMap">
+        <result property="playerId" column="player_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="roomPlayerId" column="room_player_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="iconUrl" column="icon_url" jdbcType="VARCHAR"/>
+        <result property="roomId" column="room_id" jdbcType="INTEGER"/>
+        <result property="identity" column="identity" jdbcType="VARCHAR"/>
+        <result property="isAlive" column="is_alive" jdbcType="VARCHAR"/>
+        <result property="isReady" column="is_ready" jdbcType="VARCHAR"/>
+        <result property="result" column="result" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PlayerMap">
+        select
+          player_id, user_id, room_player_id, name, icon_url, room_id, identity, is_alive, is_ready,result
+        from player
+        where player_id = #{playerId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PlayerMap">
+        select
+          player_id, user_id, room_player_id, name, icon_url, room_id, identity, is_alive, is_ready,result
+        from player
+        <where>
+            <if test="playerId != null">
+                and player_id = #{playerId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="roomPlayerId != null">
+                and room_player_id = #{roomPlayerId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="iconUrl != null and iconUrl != ''">
+                and icon_url = #{iconUrl}
+            </if>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="isAlive != null and isAlive != ''">
+                and is_alive = #{isAlive}
+            </if>
+            <if test="isReady != null and isReady != ''">
+                and is_ready = #{isReady}
+            </if>
+            <if test="result != null and result != ''">
+                and result = #{result}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from player
+        <where>
+            <if test="playerId != null">
+                and player_id = #{playerId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="roomPlayerId != null">
+                and room_player_id = #{roomPlayerId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="iconUrl != null and iconUrl != ''">
+                and icon_url = #{iconUrl}
+            </if>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="isAlive != null and isAlive != ''">
+                and is_alive = #{isAlive}
+            </if>
+            <if test="isReady != null and isReady != ''">
+                and is_ready = #{isReady}
+            </if>
+            <if test="result != null and result != ''">
+                and result = #{result}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="playerId" useGeneratedKeys="true">
+        insert into player(user_id, room_player_id, name, icon_url, room_id, identity, is_alive, is_ready,result)
+        values (#{userId}, #{roomPlayerId}, #{name}, #{iconUrl}, #{roomId}, #{identity}, #{isAlive}, #{isReady}, #{result})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="playerId" useGeneratedKeys="true">
+        insert into player(user_id, room_player_id, name, icon_url, room_id, identity, is_alive, is_ready,result)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.userId}, #{entity.roomPlayerId}, #{entity.name}, #{entity.iconUrl}, #{entity.roomId}, #{entity.identity}, #{entity.isAlive}, #{entity.isReady}, #{result})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="playerId" useGeneratedKeys="true">
+        insert into player(user_id, room_player_id, name, icon_url, room_id, identity, is_alive, is_ready,result)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.roomPlayerId}, #{entity.name}, #{entity.iconUrl}, #{entity.roomId}, #{entity.identity}, #{entity.isAlive}, #{entity.isReady}, #{result})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        room_player_id = values(room_player_id),
+        name = values(name),
+        icon_url = values(icon_url),
+        room_id = values(room_id),
+        identity = values(identity),
+        is_alive = values(is_alive),
+        is_ready = values(is_ready),
+        result = values(result)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update player
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="roomPlayerId != null">
+                room_player_id = #{roomPlayerId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="iconUrl != null and iconUrl != ''">
+                icon_url = #{iconUrl},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId},
+            </if>
+            <if test="identity != null and identity != ''">
+                identity = #{identity},
+            </if>
+            <if test="isAlive != null">
+                is_alive = #{isAlive},
+            </if>
+            <if test="isReady != null">
+                is_ready = #{isReady},
+            </if>
+            <if test="result != null and result != ''">
+                result = #{result},
+            </if>
+        </set>
+        where player_id = #{playerId}
+    </update>
+
+    <update id="updateByUserIdAndRoomId">
+        update player
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="roomPlayerId != null">
+                room_player_id = #{roomPlayerId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="iconUrl != null and iconUrl != ''">
+                icon_url = #{iconUrl},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId},
+            </if>
+            <if test="identity != null and identity != ''">
+                identity = #{identity},
+            </if>
+            <if test="isAlive != null and isAlive != ''">
+                is_alive = #{isAlive},
+            </if>
+            <if test="isReady != null">
+                is_ready = #{isReady},
+            </if>
+            <if test="result != null">
+                result = #{result},
+            </if>
+        </set>
+        where user_id = #{userId} and room_id = #{roomId}
+    </update>
+
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from player where player_id = #{playerId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.MessageDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.Game.Message" id="MessageMap">
+        <id property="messageId" column="message_id" jdbcType="INTEGER"/>
+        <result property="roomId" column="room_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="playerName" column="player_name" jdbcType="VARCHAR"/>
+        <result property="messageType" column="message_type" jdbcType="VARCHAR"/>
+        <result property="messageIndex" column="message_index" jdbcType="VARCHAR"/>
+        <result property="messageGmToPlayerId" column="message_gm_to_player_id" jdbcType="INTEGER"/>
+        <result property="messageTime" column="message_time" jdbcType="TIMESTAMP"/>
+        <result property="messageContent" column="message_content" jdbcType="VARCHAR"/>
+        <result property="fontColor" column="font_color" jdbcType="VARCHAR"/>
+        <result property="fontSize" column="font_size" jdbcType="VARCHAR"/>
+        <result property="dayTime" column="day_time" jdbcType="VARCHAR"/>
+        <result property="replyTo" column="reply_to" jdbcType="INTEGER"/>
+        <association property="user" javaType="com.jinrou.jinrouwerewolf.entity.User">
+            <result property="userId" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MessageMap">
+        select
+          message_id, room_id, user_id, player_name, message_type, message_index, message_gm_to_player_id, message_time, message_content, font_color, font_size,day_time,reply_to
+        from message
+        where message_id = #{messageId}
+    </select>
+
+    <select id="loadMessagesByRoomIdAndLimit" resultMap="MessageMap">
+        select
+            m.message_id, m.room_id, m.user_id, m.player_name, m.message_type, m.message_index, m.message_gm_to_player_id, m.message_time, m.message_content, m.font_color, m.font_size,m.day_time,m.reply_to,u.username
+        FROM message m
+                 LEFT JOIN user u ON m.user_id = u.user_id
+        WHERE m.room_id = #{roomId}
+        ORDER BY m.message_index ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="loadMessagesByRoomId" resultMap="MessageMap">
+        select
+            m.message_id, m.room_id, m.user_id, m.player_name, m.message_type, m.message_index, m.message_gm_to_player_id, m.message_time, m.message_content, m.font_color, m.font_size,m.day_time,m.reply_to,u.username
+        FROM message m
+                 LEFT JOIN user u ON m.user_id = u.user_id
+        WHERE m.room_id = #{roomId}
+        ORDER BY m.message_index ASC
+    </select>
+
+    <select id="loadMessagesByRoomIdAndRoomPlayerIdAndChannel" resultMap="MessageMap">
+        select
+            m.message_id, m.room_id, m.user_id, m.player_name, m.message_type, m.message_index, m.message_gm_to_player_id, m.message_time, m.message_content, m.font_color, m.font_size,m.day_time,m.reply_to,u.username
+        FROM message m
+                 LEFT JOIN user u ON m.user_id = u.user_id
+        WHERE m.room_id = #{roomId} AND message_type IN
+        <foreach item="channel" collection="channels" open="(" separator="," close=")">
+            #{channel}
+        </foreach>
+        AND (message_gm_to_player_id = #{roomPlayerId} OR message_gm_to_player_id IS NULL)
+        AND (
+        (message_type = 'SELFTALK' AND m.user_id = #{userId}) OR
+        (message_type = 'SELFTALK' AND m.message_gm_to_player_id = #{roomPlayerId})
+        OR (message_type != 'SELFTALK')
+        )
+        ORDER BY m.message_index ASC
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MessageMap">
+        select
+          message_id, room_id, user_id, player_name, message_type, message_index, message_gm_to_player_id, message_time, message_content, font_color, font_size,day_time,reply_to
+        from message
+        <where>
+            <if test="messageId != null">
+                and message_id = #{messageId}
+            </if>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="playerName != null and playerName != ''">
+                and player_name = #{playerName}
+            </if>
+            <if test="messageType != null and messageType != ''">
+                and message_type = #{messageType}
+            </if>
+            <if test="messageIndex != null and messageIndex != ''">
+                and message_index = #{messageIndex}
+            </if>
+            <if test="messageGmToPlayerId != null">
+                and message_gm_to_player_id = #{messageGmToPlayerId}
+            </if>
+            <if test="messageTime != null">
+                and message_time = #{messageTime}
+            </if>
+            <if test="messageContent != null and messageContent != ''">
+                and message_content = #{messageContent}
+            </if>
+            <if test="fontColor != null and fontColor != ''">
+                and font_color = #{fontColor}
+            </if>
+            <if test="fontSize != null and fontSize != ''">
+                and font_size = #{fontSize}
+            </if>
+            <if test="dayTime != null and dayTime != ''">
+                and day_time = #{dayTime}
+            </if>
+            <if test="replyTo != null and replyTo != ''">
+                and reply_to = #{replyTo}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from message
+        <where>
+            <if test="messageId != null">
+                and message_id = #{messageId}
+            </if>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="playerName != null and playerName != ''">
+                and player_name = #{playerName}
+            </if>
+            <if test="messageType != null and messageType != ''">
+                and message_type = #{messageType}
+            </if>
+            <if test="messageIndex != null and messageIndex != ''">
+                and message_index = #{messageIndex}
+            </if>
+            <if test="messageGmToPlayerId != null">
+                and message_gm_to_player_id = #{messageGmToPlayerId}
+            </if>
+            <if test="messageTime != null">
+                and message_time = #{messageTime}
+            </if>
+            <if test="messageContent != null and messageContent != ''">
+                and message_content = #{messageContent}
+            </if>
+            <if test="fontColor != null and fontColor != ''">
+                and font_color = #{fontColor}
+            </if>
+            <if test="fontSize != null and fontSize != ''">
+                and font_size = #{fontSize}
+            </if>
+            <if test="dayTime != null and dayTime != ''">
+                and day_time = #{dayTime}
+            </if>
+            <if test="replyTo != null and replyTo != ''">
+                and reply_to = #{replyTo}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="messageId" useGeneratedKeys="true">
+        insert into message(room_id, user_id, player_name, message_type, message_index, message_gm_to_player_id, message_time, message_content, font_color, font_size,day_time,reply_to)
+        values (#{roomId}, #{userId}, #{playerName}, #{messageType}, #{messageIndex}, #{messageGmToPlayerId}, #{messageTime}, #{messageContent}, #{fontColor}, #{fontSize}, #{dayTime}, #{replyTo})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="messageId" useGeneratedKeys="true">
+        insert into message(room_id, user_id, player_name, message_type, message_index, message_gm_to_player_id, message_time, message_content, font_color, font_size,day_time,reply_to)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.roomId}, #{entity.userId}, #{entity.playerName}, #{entity.messageType}, #{entity.messageIndex}, #{entity.messageGmToPlayerId}, #{entity.messageTime}, #{entity.messageContent}, #{entity.fontColor}, #{entity.fontSize}, #{dayTime},#{replyTo})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="messageId" useGeneratedKeys="true">
+        insert into message(room_id, user_id, player_name, message_type, message_index, message_gm_to_player_id, message_time, message_content, font_color, font_size,day_time,reply_to)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.roomId}, #{entity.userId}, #{entity.playerName}, #{entity.messageType}, #{entity.messageIndex}, #{entity.messageGmToPlayerId}, #{entity.messageTime}, #{entity.messageContent}, #{entity.fontColor}, #{entity.fontSize}, #{entity.dayTime},#{replyTo})
+        </foreach>
+        on duplicate key update
+        room_id = values(room_id),
+        user_id = values(user_id),
+        player_name = values(player_name),
+        message_type = values(message_type),
+        message_index = values(message_index),
+        message_gm_to_player_id = values(message_gm_to_player_id),
+        message_time = values(message_time),
+        message_content = values(message_content),
+        font_color = values(font_color),
+        font_size = values(font_size),
+        day_time = values(day_time),
+        reply_to = values(reply_to)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update message
+        <set>
+            <if test="roomId != null">
+                room_id = #{roomId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="playerName != null and playerName != ''">
+                player_name = #{playerName},
+            </if>
+            <if test="messageType != null and messageType != ''">
+                message_type = #{messageType},
+            </if>
+            <if test="messageIndex != null and messageIndex != ''">
+                message_index = #{messageIndex},
+            </if>
+            <if test="messageGmToPlayerId != null">
+                message_gm_to_player_id = #{messageGmToPlayerId},
+            </if>
+            <if test="messageTime != null">
+                message_time = #{messageTime},
+            </if>
+            <if test="messageContent != null and messageContent != ''">
+                message_content = #{messageContent},
+            </if>
+            <if test="fontColor != null and fontColor != ''">
+                font_color = #{fontColor},
+            </if>
+            <if test="fontSize != null and fontSize != ''">
+                font_size = #{fontSize},
+            </if>
+            <if test="dayTime != null and dayTime != ''">
+                day_time = #{dayTime},
+            </if>
+            <if test="replyTo != null and replyTo != ''">
+                reply_to = #{replyTo},
+            </if>
+        </set>
+        where message_id = #{messageId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from message where message_id = #{messageId}
+    </delete>
+
+</mapper>
+

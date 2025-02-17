@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.RoomDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.Game.Room" id="RoomMap">
+        <id property="roomId" column="room_id" jdbcType="INTEGER"/>
+        <result property="roomCreatorId" column="room_creator_id" jdbcType="INTEGER"/>
+        <result property="roomState" column="room_state" jdbcType="VARCHAR"/>
+        <result property="winner" column="winner" jdbcType="VARCHAR"/>
+        <result property="gameSettingId" column="game_setting_id" jdbcType="INTEGER"/>
+        <result property="roomCreateTime" column="room_create_time" jdbcType="TIMESTAMP"/>
+        <result property="roomEndTime" column="room_end_time" jdbcType="TIMESTAMP"/>
+        <result property="roomTitle" column="room_title" jdbcType="VARCHAR"/>
+        <result property="roomDescription" column="room_description" jdbcType="VARCHAR"/>
+        <result property="isAnonymous" column="is_anonymous" jdbcType="INTEGER"/>
+        <result property="isLocked" column="is_locked" jdbcType="INTEGER"/>
+        <result property="roomPassword" column="room_password" jdbcType="VARCHAR"/>
+        <result property="villageRule" column="village_rule" jdbcType="VARCHAR"/>
+        <association property="user" javaType="com.jinrou.jinrouwerewolf.entity.User">
+            <id property="userId" column="user_id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="userState" column="user_state"/>
+            <result property="email" column="email"/>
+            <result property="iconUrl" column="icon_url"/>
+            <result property="userCreateTime" column="user_create_time"/>
+            <result property="userLastOnlineTime" column="user_last_online_time"/>
+        </association>
+        <association property="gameSettings" javaType="com.jinrou.jinrouwerewolf.entity.Game.GameSettings">
+            <id property="gameSettingId" column="game_setting_id"/>
+            <result property="isFirstVictims" column="is_first_victims"/>
+            <result property="isHopeMode" column="is_hope_mode"/>
+            <result property="dayDuration" column="day_duration"/>
+            <result property="nightDuration" column="night_duration"/>
+            <result property="voteDuration" column="vote_duration"/>
+            <result property="morningDuration" column="morning_duration"/>
+            <result property="nSecondRule" column="n_second_rule"/>
+            <result property="hunterContinuousGuarding" column="hunter_continuous_guarding"/>
+            <result property="identityList" column="identity_list"/>
+            <result property="gmMode" column="gm_mode"/>
+        </association>
+        <collection property="players" ofType="com.jinrou.jinrouwerewolf.entity.Game.Player">
+            <id property="playerId" column="player_id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="roomPlayerId" column="room_player_id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="iconUrl" column="icon_url" jdbcType="VARCHAR"/>
+            <result property="roomId" column="player_room_id" jdbcType="INTEGER"/>
+            <result property="identity" column="identity" jdbcType="VARCHAR" typeHandler="com.jinrou.jinrouwerewolf.TypeHandler.IdentityToStringHandler"/>
+            <result property="isAlive" column="is_alive" jdbcType="VARCHAR"/>
+            <result property="isReady" column="is_ready" jdbcType="VARCHAR"/>
+            <result property="result" column="result" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RoomMap">
+        select
+            room_id, room_state, room_creator_id, winner, room_create_time, room_end_time, room_title, room_description, is_anonymous, is_locked, room_password,village_rule
+        from room
+        where room_id = #{roomId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RoomMap">
+        select
+        room_id, room_state, room_creator_id, winner, room_create_time, room_end_time, room_title, room_description, is_anonymous, is_locked, room_password,village_rule
+        from room
+        <where>
+            <if test="roomId != null">
+                and room_id = #{roomId}
+            </if>
+            <if test="roomState != null and roomState != ''">
+                and room_state = #{roomState}
+            </if>
+            <if test="roomCreatorId != null">
+                and room_creator_id = #{roomCreatorId}
+            </if>
+            <if test="winner != null and winner != ''">
+                and winner = #{winner}
+            </if>
+            <if test="roomCreateTime != null">
+                and room_create_time = #{roomCreateTime}
+            </if>
+            <if test="roomEndTime != null">
+                and room_end_time = #{roomEndTime}
+            </if>
+            <if test="roomTitle != null and roomTitle != ''">
+                and room_title = #{roomTitle}
+            </if>
+            <if test="roomDescription != null and roomDescription != ''">
+                and room_description = #{roomDescription}
+            </if>
+            <if test="isAnonymous != null and isAnonymous != ''">
+                and is_anonymous = #{isAnonymous}
+            </if>
+            <if test="isLocked != null and isLocked != ''">
+                and is_locked = #{isLocked}
+            </if>
+            <if test="roomPassword != null and roomPassword != ''">
+                and room_password = #{roomPassword}
+            </if>
+            <if test="villageRule != null and villageRule != ''">
+                and village_rule = #{villageRule}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="roomId" useGeneratedKeys="true">
+        insert into room(room_state, room_creator_id, winner, game_setting_id,room_create_time, room_end_time, room_title, room_description, is_anonymous, is_locked, room_password, village_rule)
+        values (#{roomState}, #{roomCreatorId}, #{winner}, #{gameSettingId} ,#{roomCreateTime}, #{roomEndTime}, #{roomTitle}, #{roomDescription}, #{isAnonymous}, #{isLocked}, #{roomPassword},#{villageRule})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update room
+        <set>
+            <if test="roomState != null and roomState != ''">
+                room_state = #{roomState},
+            </if>
+            <if test="roomCreatorId != null">
+                room_creator_id = #{roomCreatorId},
+            </if>
+            <if test="winner != null and winner != ''">
+                winner = #{winner},
+            </if>
+            <if test="roomCreateTime != null">
+                room_create_time = #{roomCreateTime},
+            </if>
+            <if test="roomEndTime != null">
+                room_end_time = #{roomEndTime},
+            </if>
+            <if test="roomTitle != null and roomTitle != ''">
+                room_title = #{roomTitle},
+            </if>
+            <if test="roomDescription != null and roomDescription != ''">
+                room_description = #{roomDescription},
+            </if>
+            <if test="isAnonymous != null and isAnonymous != ''">
+                is_anonymous = #{isAnonymous},
+            </if>
+            <if test="isLocked != null and isLocked != ''">
+                is_locked = #{isLocked},
+            </if>
+            <if test="roomPassword != null and roomPassword != ''">
+                room_password = #{roomPassword},
+            </if>
+            <if test="villageRule != null and villageRule != ''">
+                village_rule = #{villageRule}
+            </if>
+        </set>
+        where room_id = #{roomId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from room where room_id = #{roomId}
+    </delete>
+
+    <select id="getRoomsWithRoomStates" resultMap="RoomMap">
+        select
+        r.room_id, r.room_state, r.room_creator_id, r.winner,r.game_setting_id, r.room_create_time, r.room_end_time, r.room_title, r.room_description, r.is_anonymous, r.is_locked, r.room_password,r.village_rule,u.username
+        from room r left join user u on r.room_creator_id = u.user_id
+        WHERE r.room_state IN
+        <foreach item="state" collection="roomStates" open="(" separator="," close=")">
+            #{state}
+        </foreach>
+        LIMIT 500
+    </select>
+
+    <select id="getRoomsWithRoomStatesAndUserId" resultMap="RoomMap">
+        SELECT
+            r.*,u1.username as creator_name ,u2.*,
+            p.player_id, p.user_id, p.room_player_id , p.name, p.icon_url,p.room_id,p.identity,p.is_alive,p.is_ready,p.result,
+            gs.*
+        FROM (room r
+            LEFT JOIN player p ON r.room_id = p.room_id
+            LEFT JOIN user u1 ON r.room_creator_id = u1.user_id
+            LEFT JOIN user u2 ON p.user_id = u2.user_id
+            LEFT JOIN game_settings gs ON r.game_setting_id = gs.game_setting_id)
+        WHERE p.user_id = #{userId};
+    </select>
+
+
+    <select id="getRoomAndPlayersById" resultMap="RoomMap">
+        SELECT
+            r.*,u.username,
+            p.player_id, p.user_id, p.room_player_id , p.name, p.icon_url,p.room_id,p.identity,p.is_alive,p.is_ready,
+            gs.*
+        FROM (room r
+                  LEFT JOIN player p ON r.room_id = p.room_id
+                  LEFT JOIN user u ON r.room_creator_id = u.user_id
+                  LEFT JOIN game_settings gs ON r.game_setting_id = gs.game_setting_id)
+        WHERE r.room_id = #{roomId}
+    </select>
+</mapper>
+
+

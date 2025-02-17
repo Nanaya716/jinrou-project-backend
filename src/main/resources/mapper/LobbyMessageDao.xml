@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.LobbyMessageDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.LobbyMessage" id="LobbyMessageMap">
+        <result property="lobbyMessageId" column="lobby_message_id" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="publishUserId" column="publish_user_id" jdbcType="INTEGER"/>
+        <result property="publishTime" column="publish_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="LobbyMessageMap">
+        select
+          lobby_message_id, content, publish_user_id, publish_time
+        from lobby_message
+        where lobby_message_id = #{lobbyMessageId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="LobbyMessageMap">
+        select
+          lobby_message_id, content, publish_user_id, publish_time
+        from lobby_message
+        <where>
+            <if test="lobbyMessageId != null">
+                and lobby_message_id = #{lobbyMessageId}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="publishUserId != null">
+                and publish_user_id = #{publishUserId}
+            </if>
+            <if test="publishTime != null">
+                and publish_time = #{publishTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from lobby_message
+        <where>
+            <if test="lobbyMessageId != null">
+                and lobby_message_id = #{lobbyMessageId}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="publishUserId != null">
+                and publish_user_id = #{publishUserId}
+            </if>
+            <if test="publishTime != null">
+                and publish_time = #{publishTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="lobbyMessageId" useGeneratedKeys="true">
+        insert into lobby_message(content, publish_user_id, publish_time)
+        values (#{content}, #{publishUserId}, #{publishTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="lobbyMessageId" useGeneratedKeys="true">
+        insert into lobby_message(content, publish_user_id, publish_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.content}, #{entity.publishUserId}, #{entity.publishTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="lobbyMessageId" useGeneratedKeys="true">
+        insert into lobby_message(content, publish_user_id, publish_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.content}, #{entity.publishUserId}, #{entity.publishTime})
+        </foreach>
+        on duplicate key update
+        content = values(content),
+        publish_user_id = values(publish_user_id),
+        publish_time = values(publish_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update lobby_message
+        <set>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="publishUserId != null">
+                publish_user_id = #{publishUserId},
+            </if>
+            <if test="publishTime != null">
+                publish_time = #{publishTime},
+            </if>
+        </set>
+        where lobby_message_id = #{lobbyMessageId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from lobby_message where lobby_message_id = #{lobbyMessageId}
+    </delete>
+
+</mapper>
+

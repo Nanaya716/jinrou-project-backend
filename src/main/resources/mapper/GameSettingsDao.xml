@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.GameSettingsDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.Game.GameSettings" id="GameSettingsMap">
+        <result property="gameSettingId" column="game_setting_id" jdbcType="INTEGER"/>
+        <result property="isFirstVictims" column="is_first_victims" jdbcType="VARCHAR"/>
+        <result property="isHopeMode" column="is_hope_mode" jdbcType="VARCHAR"/>
+        <result property="dayDuration" column="day_duration" jdbcType="INTEGER"/>
+        <result property="nightDuration" column="night_duration" jdbcType="INTEGER"/>
+        <result property="voteDuration" column="vote_duration" jdbcType="INTEGER"/>
+        <result property="morningDuration" column="morning_duration" jdbcType="VARCHAR"/>
+        <result property="nSecondRule" column="n_second_rule" jdbcType="INTEGER"/>
+        <result property="hunterContinuousGuarding" column="hunter_continuous_guarding" jdbcType="VARCHAR"/>
+        <result property="identityList" column="identity_list" jdbcType="VARCHAR" javaType="List"  typeHandler="com.jinrou.jinrouwerewolf.TypeHandler.ListToStringHandler"/>
+        <result property="gmMode" column="gm_mode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GameSettingsMap">
+        select
+          game_setting_id, is_first_victims, is_hope_mode, day_duration, night_duration, vote_duration, morning_duration, n_second_rule, hunter_continuous_guarding, identity_list,gm_mode
+        from game_settings
+        where game_setting_id = #{gameSettingId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GameSettingsMap">
+        select
+          game_setting_id, is_first_victims, is_hope_mode, day_duration, night_duration, vote_duration, morning_duration, n_second_rule, hunter_continuous_guarding, identity_list
+        from game_settings
+        <where>
+            <if test="gameSettingId != null">
+                and game_setting_id = #{gameSettingId}
+            </if>
+            <if test="isFirstVictims != null and isFirstVictims != ''">
+                and is_first_victims = #{isFirstVictims}
+            </if>
+            <if test="isHopeMode != null and isHopeMode != ''">
+                and is_hope_mode = #{isHopeMode}
+            </if>
+            <if test="dayDuration != null">
+                and day_duration = #{dayDuration}
+            </if>
+            <if test="nightDuration != null">
+                and night_duration = #{nightDuration}
+            </if>
+            <if test="voteDuration != null">
+                and vote_duration = #{voteDuration}
+            </if>
+            <if test="morningDuration != null and morningDuration != ''">
+                and morning_duration = #{morningDuration}
+            </if>
+            <if test="nSecondRule != null">
+                and n_second_rule = #{nSecondRule}
+            </if>
+            <if test="hunterContinuousGuarding != null">
+                and hunter_continuous_guarding = #{hunterContinuousGuarding}
+            </if>
+            <if test="identityList != null and identityList != ''">
+                and identity_list = #{identityList}
+            </if>
+            <if test="gmMode != null">
+                and gm_mode = #{gmMode}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from game_settings
+        <where>
+            <if test="gameSettingId != null">
+                and game_setting_id = #{gameSettingId}
+            </if>
+            <if test="isFirstVictims != null and isFirstVictims != ''">
+                and is_first_victims = #{isFirstVictims}
+            </if>
+            <if test="isHopeMode != null and isHopeMode != ''">
+                and is_hope_mode = #{isHopeMode}
+            </if>
+            <if test="dayDuration != null">
+                and day_duration = #{dayDuration}
+            </if>
+            <if test="nightDuration != null">
+                and night_duration = #{nightDuration}
+            </if>
+            <if test="voteDuration != null">
+                and vote_duration = #{voteDuration}
+            </if>
+            <if test="morningDuration != null and morningDuration != ''">
+                and morning_duration = #{morningDuration}
+            </if>
+            <if test="nSecondRule != null and nSecondRule != ''">
+                and n_second_rule = #{nSecondRule}
+            </if>
+            <if test="hunterContinuousGuarding != null and hunterContinuousGuarding != ''">
+                and hunter_continuous_guarding = #{hunterContinuousGuarding}
+            </if>
+            <if test="identityList != null and identityList != ''">
+                and identity_list = #{identityList}
+            </if>
+            <if test="gmMode != null">
+                and gm_mode = #{gmMode}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="gameSettingId" useGeneratedKeys="true">
+        insert into game_settings(is_first_victims, is_hope_mode, day_duration, night_duration, vote_duration, morning_duration, n_second_rule, hunter_continuous_guarding, identity_list,gm_mode)
+        values (#{isFirstVictims}, #{isHopeMode}, #{dayDuration}, #{nightDuration}, #{voteDuration}, #{morningDuration}, #{nSecondRule}, #{hunterContinuousGuarding}, #{identityList,typeHandler=com.jinrou.jinrouwerewolf.TypeHandler.ListToStringHandler},#{gmMode})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update game_settings
+        <set>
+            <if test="isFirstVictims != null">
+                is_first_victims = #{isFirstVictims},
+            </if>
+            <if test="isHopeMode != null">
+                is_hope_mode = #{isHopeMode},
+            </if>
+            <if test="dayDuration != null">
+                day_duration = #{dayDuration},
+            </if>
+            <if test="nightDuration != null">
+                night_duration = #{nightDuration},
+            </if>
+            <if test="voteDuration != null">
+                vote_duration = #{voteDuration},
+            </if>
+            <if test="morningDuration != null and morningDuration != ''">
+                morning_duration = #{morningDuration},
+            </if>
+            <if test="nSecondRule != null">
+                n_second_rule = #{nSecondRule},
+            </if>
+            <if test="hunterContinuousGuarding != null and hunterContinuousGuarding != ''">
+                hunter_continuous_guarding = #{hunterContinuousGuarding},
+            </if>
+            <if test="identityList != null and identityList != ''">
+                identity_list = #{identityList},
+            </if>
+            <if test="gmMode != null">
+                gm_mode = #{gmMode}
+            </if>
+        </set>
+        where game_setting_id = #{gameSettingId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from game_settings where game_setting_id = #{gameSettingId}
+    </delete>
+
+</mapper>
+

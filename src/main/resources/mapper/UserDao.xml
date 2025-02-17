@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinrou.jinrouwerewolf.dao.UserDao">
+
+    <resultMap type="com.jinrou.jinrouwerewolf.entity.User" id="UserMap">
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="userState" column="user_state" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="iconUrl" column="icon_url" jdbcType="VARCHAR"/>
+        <result property="userCreateTime" column="user_create_time" jdbcType="TIMESTAMP"/>
+        <result property="userLastOnlineTime" column="user_last_online_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+<!--    <select>-->
+<!--        select * from user where username = #{username}-->
+<!--    </select>-->
+</mapper>
+
