@@ -13,12 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class SubscriptionServiceImpl {
     public void handleUnsubscribe(String sessionId, String subScribedId) {
-        System.out.println("客户端取消订阅: " + "SessionId:" + sessionId + "subscribedId:" + subScribedId );
         // 移除订阅信息
             WebSocketSessionStore.removeSubscription(sessionId, subScribedId);
     }
     public void handleSubscribe(String sessionId, String subScribedId,String destination) {
-        System.out.println("客户端订阅成功: " + destination + "SessionId:" + sessionId + "subscribedId:" + subScribedId );
         // 添加订阅信息
         if (destination != null) {
             WebSocketSessionStore.addSubscription(sessionId,subScribedId, destination);

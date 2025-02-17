@@ -184,13 +184,11 @@ public class GameTask implements Runnable {
             if (i == 1) {
                 phaseTimer.start(
                         () -> {
-                            System.out.println("第" + current + "次投票结束");
                             // 模拟投票操作
                         }, true, VoteComingGameActionBody);
             } else {
                 phaseTimer.start(
                         () -> {
-                            System.out.println("第" + current + "次投票结束");
                             // 模拟投票操作
                         }, true, creatStartedGameActionBody(ConstConfig.GAME_STATUS_NOT_OVER_TIE,
                                 null,
@@ -304,7 +302,6 @@ public class GameTask implements Runnable {
                     return true;
                 default:
                     // 其他情况
-                    System.out.println("未知状态");
                     return false;
             }
         }
@@ -329,7 +326,6 @@ public class GameTask implements Runnable {
                 Message.system(this.room.getRoomId(), "第" + getGameInfo().getDayCount() + "天的夜晚到来了。", redisService, true)
         );
         phaseTimer.start(() -> {
-            System.out.println("夜晚时间到，进入下一阶段！");
         }, false, NightComingGameActionBody);
 
         // 等待夜晚时间结束
@@ -384,7 +380,6 @@ public class GameTask implements Runnable {
                 return true;
             default:
                 // 其他情况
-                System.out.println("未知状态");
                 return true;
         }
     }
@@ -400,7 +395,6 @@ public class GameTask implements Runnable {
             messageService.save(gameActionBody.getMessage());
         }
         messagingTemplate.convertAndSend("/topic/room/" + gameInfo.getRoomId() + topic, gameActionBody);
-        System.out.println(gameActionBody);
     }
 
     public void NotifyPlayers(GameActionBody gameActionBody, String topic) {
@@ -446,7 +440,6 @@ public class GameTask implements Runnable {
      */
     private Integer processVoteResults() {
         int voteResult = gameInfo.getVoteResult();
-        System.out.println("voteResult:" + voteResult);
         // 检查投票是否平局
         if (voteResult == -1) {
             return -1;
@@ -454,7 +447,6 @@ public class GameTask implements Runnable {
 
         // 执行投票结果
         Player votedPlayer = getPlayerByRoomPlayerId(room.getPlayers(), voteResult);
-        System.out.println("被投票玩家:" + votedPlayer);
         if (votedPlayer != null) {
             execute(voteResult);
             checkKitsuneDie();
@@ -844,7 +836,6 @@ public class GameTask implements Runnable {
             for (Map.Entry<Integer, String> entry : entryList) {
                 shuffledMap.put(entry.getKey(), entry.getValue());
             }
-            System.out.println(shuffledMap);
             // 3. 现在 shuffledMap 是乱序的，可以遍历
             shuffledMap.forEach((key, value) -> {
                 Player player = getPlayerByRoomPlayerId(room.getPlayers(), key);

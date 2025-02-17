@@ -54,7 +54,6 @@ public class WebSocketConnectListener implements ApplicationListener<SessionConn
         public void onApplicationEvent(SessionDisconnectEvent event) {
             String sessionId = event.getSessionId();
             WebSocketSessionStore.removeSessionData(sessionId);
-            System.out.println("WebSocket 已断开, sessionId: " + sessionId);
             chatController.OnlineUserUpdate("/topic/chatRoom");
         }
     }

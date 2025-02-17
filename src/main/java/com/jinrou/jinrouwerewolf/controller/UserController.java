@@ -48,7 +48,6 @@ public class UserController {
             // 如果验证成功，生成 Token
             String token = jwtUtil.getToken(existingUser);
             //将token存进redis
-            System.out.println("存数据到redis");
             redisService.setValueBySeconds("jwt_token:" + existingUser.getUserId(), token, 604800); //7天 单位秒
 
             Map<String, Object> responseData = new HashMap<>();
@@ -112,7 +111,6 @@ public class UserController {
             // 如果修改成功，生成 Token
             String token = jwtUtil.getToken(user);
             //将token存进redis
-            System.out.println("存数据到redis");
             redisService.setValueBySeconds("jwt_token:" + user.getUserId(), token, 604800); //7天 单位秒
 
             Map<String, Object> responseData = new HashMap<>();
@@ -130,14 +128,12 @@ public class UserController {
 
     @PostMapping("/logout")
     public Result logout(@RequestHeader("Authorization") String token) {
-        System.out.println("进入logout");
         token = token.replace("Bearer ", "");  // 去掉 "Bearer " 前缀
         // 检查并提取 Bearer Token
 
         try {
             // 使 Token 失效，从 Redis 中删除 Token
             redisService.delete("jwt_token:" + token);
-            System.out.println("登出成功token:"+ token);
             // 返回成功的响应
             return Result.success("登出成功");
         } catch (Exception e) {
@@ -148,7 +144,6 @@ public class UserController {
 
     @GetMapping("check")
     public Result doCheck() {
-        System.out.println("验证成功");
         return Result.success();
     }
 
@@ -165,7 +160,6 @@ public class UserController {
         // 生成验证码
         String registerCode = "114514";
         // 发送验证码到用户邮箱
-        System.out.println("registerCode = " + registerCode + "email = " + email);
         return Result.success("发送验证码成功");
     }
 

@@ -58,7 +58,6 @@ public class ChatController {
      */
     @MessageMapping("/chatRoom")
     public void chatRoomSendMessage(Message message) {
-        System.out.println("收到消息: " + message);
         message.setMessageIndex(redisService.getNextMessageIndexAndIncr(String.valueOf(message.getRoomId())));
         messageService.save(message);
         messagingTemplate.convertAndSend("/topic/chatRoom", message);
@@ -76,9 +75,9 @@ public class ChatController {
         Integer userId = WebSocketSessionStore.getWebsocketSessions(headerAccessor.getSessionId()).getUser().getUserId();
         String userId2 = (String) headerAccessor.getSessionAttributes().get("userId");
         List<Message> msgs = messageService.loadMessagesByRoomIdAndLimit("0", 100);
-        for (SimpUser user : simpUserRegistry.getUsers()) {
-            System.out.println("User: " + user.getName() + ", Sessions: " + user.getSessions());
-        }
+//        for (SimpUser user : simpUserRegistry.getUsers()) {
+//            System.out.println("User: " + user.getName() + ", Sessions: " + user.getSessions());
+//        }
         messagingTemplate.convertAndSendToUser(
                 userId2,              // 前端 WebSocket 的 sessionId
                 "/queue/" + 0 + "/messages",       // 匹配的队列路径
@@ -101,8 +100,6 @@ public class ChatController {
         sendToAllUserMsg.setMessageType("GM");
         sendToAllUserMsg.setMessageContent(JSON.toJSONString(users));
         //更新在线用户列表
-        System.out.println(destination);
-        System.out.println("更新在线用户列表" + sendToAllUserMsg);
         messagingTemplate.convertAndSend(destination, sendToAllUserMsg);
     }
 
@@ -114,7 +111,6 @@ public class ChatController {
      */
     @MessageMapping("/room/{roomId}/{nowSendChannel}")
     public void RoomSendMessage(@DestinationVariable String roomId, Message message, @DestinationVariable String nowSendChannel, SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("收到消息: " + message);
         message.setMessageIndex(redisService.getNextMessageIndexAndIncr(String.valueOf(message.getRoomId())));
         messageService.save(message);
         String userId = (String) headerAccessor.getSessionAttributes().get("userId");
@@ -175,7 +171,6 @@ public class ChatController {
 
     @MessageMapping("/room/{roomId}/{nowSendChannel}/gameAction")
     public void doGameAction(@DestinationVariable String roomId, GameActionBody gameActionBody, @DestinationVariable String nowSendChannel, SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("收到消息gameaction: " + gameActionBody);
         GameTask gameTask = gameController.getGameTask(Integer.valueOf(roomId));
         String userId = (String) headerAccessor.getSessionAttributes().get("userId");
         String GMuserId = gameTask.getRoom().getPlayers().stream().filter(player -> player.getIdentity().getName() == "GM").findFirst().orElse(new Player()).getUserId().toString();
@@ -369,7 +364,6 @@ public class ChatController {
                     && (gameTask.getGameInfo().getGameState() == "NIGHT" || gameTask.getGameInfo().getGameState() == "MORNING")
                     && gameTask.getGameInfo().getDayCount() != 1
                     && gameTask.getGameInfo().getKariudoMap().get(player.getRoomPlayerId()) == null) {
-                System.out.println(gameTask.getGameInfo().getDayCount() != 1);
                     gameActionBody.setNeedKariudo(true);
             }
 

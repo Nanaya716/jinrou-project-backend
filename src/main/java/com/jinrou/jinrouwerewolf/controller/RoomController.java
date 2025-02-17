@@ -51,7 +51,6 @@ public class RoomController {
         // 将逗号分隔的字符串转换为 List<String>
         List<String> statesList = Arrays.asList(states.split(","));
         List<Room> getedRooms = roomService.getRoomsWithRoomStates(statesList);
-        System.out.println(getedRooms);
         return Result.success(getedRooms);
     }
 
@@ -67,7 +66,6 @@ public class RoomController {
     public Result getRoomAndPlayersById(@RequestParam(value = "roomId", required = true) int roomId) {
         //room表
         Room getedRoom = roomService.getRoomAndPlayersById(roomId);
-        System.out.println(getedRoom);
         return Result.success(getedRoom);
     }
 
@@ -131,7 +129,6 @@ public class RoomController {
 
     @PostMapping("/leftRoom")
     public Result leftRoom(@RequestBody Player player) {
-        System.out.println(player);
         player.setRoomPlayerId(redisService.generatePlayerId(player.getRoomId()).intValue());
         player.setIsAlive(true);
         player.setIsReady(false);
@@ -212,7 +209,6 @@ public class RoomController {
 
     @PostMapping("/changeChannels")
     public Result changeChannels(@RequestBody Player player) {
-        System.out.println(player);
         try {
             Player QueryedPlayer = playerService.QueryByUserIdAndRoomId(player.getUserId(), player.getRoomId());
             return Result.success(QueryedPlayer);
@@ -224,7 +220,6 @@ public class RoomController {
 
     @PostMapping("/ready")
     public Result changeGameSettings(@RequestBody Player player) {
-        System.out.println(player);
         // 调用 update 方法
         int updated = playerService.updateByUserIdAndRoomId(player);
 

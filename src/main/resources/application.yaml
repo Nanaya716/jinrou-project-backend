@@ -42,7 +42,7 @@ mybatis-plus:
   type-handlers-package: com.jinrou.jinrouwerewolf.TypeHandler
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath:mapper/*.xml
 
 server:
@@ -50,14 +50,14 @@ server:
   servlet:
     session:
       timeout: 0s  # 设置 session 超时为 0，表示禁用 session
-logging:
-  level:
-    org.springframework.web.socket: DEBUG
-    org.springframework.messaging: DEBUG
-    org.springframework.web.socket.messaging: DEBUG
-    org.mybatis: DEBUG
-    com.baomidou.mybatisplus: DEBUG
-    org.apache.ibatis.type.TypeHandlerRegistry: DEBUG
+#logging:
+#  level:
+#    org.springframework.web.socket: DEBUG
+#    org.springframework.messaging: DEBUG
+#    org.springframework.web.socket.messaging: DEBUG
+#    org.mybatis: DEBUG
+#    com.baomidou.mybatisplus: DEBUG
+#    org.apache.ibatis.type.TypeHandlerRegistry: DEBUG
 
 
 

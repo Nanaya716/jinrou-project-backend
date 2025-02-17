@@ -56,7 +56,6 @@ public class PhaseTimer {
         scheduledTask = scheduler.scheduleAtFixedRate(() -> {
             synchronized (this) {
                 remainingTime -= 1000; // 每秒减少 1 秒
-                System.out.println("Remaining Time: " + remainingTime / 1000 + "s");
                 if (last) {
                     //持续判断是否应该结束计时
                     switch (nowState) {
@@ -102,7 +101,6 @@ public class PhaseTimer {
     public void adjustTime(long adjustmentMillis) {
         synchronized (this) {
             remainingTime += adjustmentMillis; // 调整剩余时间
-            System.out.println("Adjusted Time: " + remainingTime / 1000 + "s"); // 输出调整后的剩余时间
         }
     }
 
@@ -114,7 +112,6 @@ public class PhaseTimer {
     public void resetTime(long resetTimeMillis) {
         synchronized (this) {
             remainingTime = resetTimeMillis;
-            System.out.println("Reset Time: " + remainingTime / 1000 + "s"); // 输出调整后的剩余时间
         }
     }
 

@@ -27,14 +27,12 @@ public class WebsocketInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) {
-        System.out.println("WebSocket 握手开始");
         return true; // 握手失败
     }
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception exception) {
-        System.out.println("WebSocket 握手完成");
     }
 }
 
