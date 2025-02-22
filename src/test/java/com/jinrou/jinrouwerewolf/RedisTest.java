@@ -58,27 +58,27 @@ public class RedisTest {
 //        String value = (String) redisService.getValue(String.valueOf(1));
 //        System.out.println(value);
 
-        GameSettings settings = new GameSettings();
-        settings.setGameSettingId(1);
-        settings.setIsFirstVictims(true);
-        settings.setIsHopeMode(false);
-        settings.setDayDuration(300);
-        settings.setNightDuration(180);
-        settings.setVoteDuration(60);
-        settings.setMorningDuration(30);
-        settings.setNSecondRule(10);
-        settings.setHunterContinuousGuarding(false);
-        // 创建空的 ArrayList
-        List<String> list = new ArrayList<>();
-
-        // 添加元素
-        list.add("人狼");
-        list.add("人狼");
-        list.add("占卜师");
-
-        settings.setIdentityList(list);
-
-        gameSettingsService.insert(settings);
+//        GameSettings settings = new GameSettings();
+//        settings.setGameSettingId(1);
+//        settings.setIsFirstVictims(true);
+//        settings.setIsHopeMode(false);
+//        settings.setDayDuration(300);
+//        settings.setNightDuration(180);
+//        settings.setVoteDuration(60);
+//        settings.setMorningDuration(30);
+//        settings.setNSecondRule(10);
+//        settings.setHunterContinuousGuarding(false);
+//        // 创建空的 ArrayList
+//        List<String> list = new ArrayList<>();
+//
+//        // 添加元素
+//        list.add("人狼");
+//        list.add("人狼");
+//        list.add("占卜师");
+//
+//        settings.setIdentityList(list);
+//
+//        gameSettingsService.insert(settings);
 
     }
 }

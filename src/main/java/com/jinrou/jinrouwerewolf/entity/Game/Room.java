@@ -111,6 +111,8 @@ public class Room implements Serializable,Cloneable {
 
     private User user;
 
+    private int playerCount;
+
 
     public Player getPlayerByUserId(Integer userId){
         Player getedPlayer = this.getPlayers().stream()

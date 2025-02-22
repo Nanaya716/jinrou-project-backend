@@ -173,7 +173,7 @@ public class ChatController {
     public void doGameAction(@DestinationVariable String roomId, GameActionBody gameActionBody, @DestinationVariable String nowSendChannel, SimpMessageHeaderAccessor headerAccessor) {
         GameTask gameTask = gameController.getGameTask(Integer.valueOf(roomId));
         String userId = (String) headerAccessor.getSessionAttributes().get("userId");
-        String GMuserId = gameTask.getRoom().getPlayers().stream().filter(player -> player.getIdentity().getName() == "GM").findFirst().orElse(new Player()).getUserId().toString();
+        Integer GMuserId = gameTask.getRoom().getPlayers().stream().filter(player -> player.getIdentity().getName() == "GM").findFirst().orElse(new Player()).getUserId();
         switch (gameActionBody.getCode()) {
             case ConstConfig.GAME_ACTION_URANAI:
                 gameTask.getGameInfo().getUranaiMap().put(gameActionBody.getOperatorOfPlayerId(), gameActionBody.getTargetOfPlayerId());
@@ -187,21 +187,21 @@ public class ChatController {
                         Message.system(Integer.valueOf(roomId), gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getOperatorOfPlayerId()).getName() + " 占卜了 " + gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getTargetOfPlayerId()).getName() + " 的身份，结果为" + result, redisService, true, gameActionBody.getOperatorOfPlayerId()));
                 gameTask.saveAndNotifyOnePlayer(uranaiResult, Integer.valueOf(userId));
                 //通知GM
-                gameTask.saveAndNotifyOnePlayer(uranaiResult, Integer.valueOf(GMuserId));
+                gameTask.notifyOnePlayer(uranaiResult, GMuserId);
                 break;
             case ConstConfig.GAME_ACTION_VOTE:
                 gameTask.getGameInfo().getVoteInfo().put(gameActionBody.getOperatorOfPlayerId(), gameActionBody.getTargetOfPlayerId());
                 GameActionBody voteResult = gameTask.creatStartedGameActionBody(ConstConfig.GAME_URANAI_RESULT, null, null,
                         Message.system(Integer.valueOf(roomId), gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getOperatorOfPlayerId()).getName() + " 向 " + gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getTargetOfPlayerId()).getName() + " 投票了。", redisService, true, gameActionBody.getOperatorOfPlayerId()));
                 gameTask.saveAndNotifyOnePlayer(voteResult, Integer.valueOf(userId));
-                gameTask.saveAndNotifyOnePlayer(voteResult, Integer.valueOf(GMuserId));
+                gameTask.notifyOnePlayer(voteResult, GMuserId);
                 break;
             case ConstConfig.GAME_ACTION_KAMI:
                 gameTask.getGameInfo().getKillMap().put(gameActionBody.getOperatorOfPlayerId(), gameActionBody.getTargetOfPlayerId());
                 GameActionBody hasKamiResult = gameTask.creatStartedGameActionBody(ConstConfig.GAME_WOLF_HAS_KAMI, null, null,
                         Message.wolftalk(Integer.valueOf(roomId), gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getOperatorOfPlayerId()).getName() + " 袭击了 " + gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getTargetOfPlayerId()).getName() + "。", redisService, true, null));
                 gameTask.saveAndNotifyPlayers(hasKamiResult, "/WOLFTALK");
-                gameTask.saveAndNotifyOnePlayer(hasKamiResult, Integer.valueOf(GMuserId));
+
                 break;
             case ConstConfig.GAME_ACTION_GM_TIME_LONG:
                 gameTask.modifyRemainingTime(20000);
@@ -214,7 +214,7 @@ public class ChatController {
                 GameActionBody kariudoResult = gameTask.creatStartedGameActionBody(ConstConfig.GAME_KARIUDO_RESULT, null, null,
                         Message.system(Integer.valueOf(roomId), gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getOperatorOfPlayerId()).getName() + " 守护了 " + gameTask.getRoom().getPlayerByRoomPlayerId(gameActionBody.getTargetOfPlayerId()).getName() + "。", redisService, true, gameActionBody.getOperatorOfPlayerId()));
                 gameTask.saveAndNotifyOnePlayer(kariudoResult, Integer.valueOf(userId));
-                gameTask.saveAndNotifyOnePlayer(kariudoResult, Integer.valueOf(GMuserId));
+                gameTask.notifyOnePlayer(kariudoResult, GMuserId);
                 break;
             case ConstConfig.GAME_ACTION_GM_TIME_SHORT:
                 if (gameTask.getPhaseTimer().getRemainingTime() > 20000) {

@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // 也就是我们配置websocket的服务地址,并且可以指定是否使用socketjs
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/wsConnect")
+        registry.addEndpoint("/api/wsConnect")
                 .setAllowedOriginPatterns("*")
                 .setHandshakeHandler(handshakeHandler)
                 .addInterceptors(new WebsocketInterceptor()) // 添加自定义握手拦截器

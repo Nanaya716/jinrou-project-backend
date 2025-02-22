@@ -16,6 +16,7 @@
         <result property="isLocked" column="is_locked" jdbcType="INTEGER"/>
         <result property="roomPassword" column="room_password" jdbcType="VARCHAR"/>
         <result property="villageRule" column="village_rule" jdbcType="VARCHAR"/>
+        <result property="playerCount" column="player_count" jdbcType="INTEGER"/>
         <association property="user" javaType="com.jinrou.jinrouwerewolf.entity.User">
             <id property="userId" column="user_id"/>
             <result property="username" column="username"/>
@@ -160,13 +161,17 @@
 
     <select id="getRoomsWithRoomStates" resultMap="RoomMap">
         select
-        r.room_id, r.room_state, r.room_creator_id, r.winner,r.game_setting_id, r.room_create_time, r.room_end_time, r.room_title, r.room_description, r.is_anonymous, r.is_locked, r.room_password,r.village_rule,u.username
+        r.room_id, r.room_state, r.room_creator_id, r.winner,r.game_setting_id, r.room_create_time, r.room_end_time, r.room_title, r.room_description, r.is_anonymous, r.is_locked, r.room_password,r.village_rule,u.username,
+        COUNT(CASE WHEN p.room_player_id != 0 THEN 1 END)  AS player_count
         from room r left join user u on r.room_creator_id = u.user_id
-        WHERE r.room_state IN
+        left join player p on r.room_id = p.room_id
+         WHERE r.room_state IN
         <foreach item="state" collection="roomStates" open="(" separator="," close=")">
             #{state}
         </foreach>
+        GROUP BY r.room_id
         LIMIT 500
+
     </select>
 
     <select id="getRoomsWithRoomStatesAndUserId" resultMap="RoomMap">
@@ -179,7 +184,11 @@
             LEFT JOIN user u1 ON r.room_creator_id = u1.user_id
             LEFT JOIN user u2 ON p.user_id = u2.user_id
             LEFT JOIN game_settings gs ON r.game_setting_id = gs.game_setting_id)
-        WHERE p.user_id = #{userId};
+        WHERE p.user_id = #{userId} AND r.room_state IN
+        <foreach item="state" collection="roomStates" open="(" separator="," close=")">
+            #{state}
+        </foreach>
+        LIMIT 500
     </select>
 
 

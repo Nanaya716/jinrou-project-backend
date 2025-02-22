@@ -11,7 +11,7 @@ import org.springframework.web.filter.CorsFilter;
  * @Date: 2024/07/06/23:57
  * @Email: qiyewuyin@gmail.com\714991699@qq.com
  * @QQ: 714991699
- * @Description:
+ * @Description: 跨域请求设定
  */
 @Configuration
 public class CORSConfiguration {

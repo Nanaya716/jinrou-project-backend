@@ -335,10 +335,13 @@ public class GameTask implements Runnable {
             if (gameInfo.getDayCount() == 1) {
                 //第一天的初日牺牲者
                 this.getGameInfo().getKillMap().put(0, 0);
+                if("占卜师".equals(getPlayerByRoomPlayerId(room.getPlayers(), 0).getIdentity().getName())){
+                    this.getGameInfo().getUranaiMap().put(0, 0);
+                }
             }
             //判断是否需要进入延长阶段
             if (this.getGameInfo().getUranaiMap().size() < this.countIdentity("占卜师").size() ||
-                    (this.getGameInfo().getDayCount() != 1 || this.getGameInfo().getKariudoMap().size() < this.countIdentity("猎人").size()) ||
+                    (this.getGameInfo().getDayCount() != 1 && this.getGameInfo().getKariudoMap().size() < this.countIdentity("猎人").size()) ||
                     this.getGameInfo().getKillMap().size() == 0) {
                 //进入延长阶段
                 this.gameInfo.setGameState("MORNING");
@@ -411,7 +414,14 @@ public class GameTask implements Runnable {
                 "/queue/" + room.getRoomId() + "/messages",       // 匹配的队列路径
                 gameActionBody                 // 要发送的消息内容
         );
+    }
 
+    public void notifyOnePlayer(GameActionBody gameActionBody, Integer userId) {
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(userId),              // 前端 WebSocket 的 sessionId
+                "/queue/" + room.getRoomId() + "/messages",       // 匹配的队列路径
+                gameActionBody                 // 要发送的消息内容
+        );
     }
 
     public GameActionBody creatStartedGameActionBody(String code,

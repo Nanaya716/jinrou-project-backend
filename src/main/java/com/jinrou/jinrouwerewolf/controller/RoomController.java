@@ -105,6 +105,15 @@ public class RoomController {
         if(getedPlayer != null){
             return Result.error("加入失败，您已经加入该房间","加入失败，您已经加入该房间");
         }
+        Room room = roomService.getRoomAndPlayersById(player.getRoomId());
+
+        if (room.getPlayers().stream().anyMatch(p -> p.getName().equals(player.getName()))) {
+            return Result.error("加入失败，该房间已有同名玩家", "加入失败，该房间已有同名玩家");
+        }
+
+        if (room.getPlayers().size() >= 30) {
+            return Result.error("加入失败，该房间人数已满","加入失败，该房间人数已满");
+        }
         player.setRoomPlayerId(redisService.generatePlayerId(player.getRoomId()).intValue());
         player.setIsAlive(true);
         player.setIsReady(false);
@@ -116,8 +125,6 @@ public class RoomController {
         //构造actionbody的Message
         Message message = Message.system(player.getRoomId(), player.getName() + "加入了游戏。",redisService,true);
         message.setUserId(player.getUserId());
-        message.setPlayerName(player.getName());
-        message.setMessageIndex(redisService.getNextMessageIndexAndIncr(String.valueOf(message.getRoomId())));
         gameActionBody.setMessage(message);
         gameActionBody.setRoom(roomService.getRoomAndPlayersById(player.getRoomId()));
         if (playerId != null) {
@@ -141,8 +148,6 @@ public class RoomController {
         //构造actionbody的Message
         Message message = Message.system(player.getRoomId(), player.getName() + "离开了游戏。",redisService,true);
         message.setUserId(QueryedPlayer.getUserId());
-        message.setPlayerName(QueryedPlayer.getName());
-        message.setMessageIndex(redisService.getNextMessageIndexAndIncr(String.valueOf(message.getRoomId())));
         gameActionBody.setMessage(message);
         gameActionBody.setRoom(roomService.getRoomAndPlayersById(player.getRoomId()));
         messageService.save(message);
@@ -195,11 +200,9 @@ public class RoomController {
             gameSettingsService.update(gameSettings);
             //构造actionbody的Message
             Message message = Message.system(roomId, "房间设置已更新。",redisService,true);
-            message.setMessageIndex(redisService.getNextMessageIndexAndIncr(String.valueOf(message.getRoomId())));
             messageService.save(message);
             Room room = roomService.getRoomAndPlayersById(roomId);
             messagingTemplate.convertAndSend("/topic/room/" + roomId + "/ALL", new GameActionBody(ConstConfig.ROOM_GAMESETTINGS_CHANGE, message, room));
-
             return Result.success("成功");
         } catch (Exception e) {
             e.printStackTrace();
