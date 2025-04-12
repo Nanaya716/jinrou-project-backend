@@ -2,4 +2,4 @@ spring:
   application:
     name: jinrouwerewolf
   profiles:
-    active: prod
+    active: dev

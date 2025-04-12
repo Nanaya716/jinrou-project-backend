@@ -33,6 +33,8 @@ public class GameUtil {
                 return new Werewolf();
             case "狂人":
                 return new Kyoujin();
+            case "听狂人":
+                return new Kikyoujin();
             case "妖狐":
                 return new Kitsune();
             case "背德者":

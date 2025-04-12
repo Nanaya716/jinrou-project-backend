@@ -359,6 +359,8 @@ public class GameService {
             case "GM":
                 identity = new GM();
                 break;
+            case "听狂人":
+                identity = new Kikyoujin();
             case "none":
                 break;
         }

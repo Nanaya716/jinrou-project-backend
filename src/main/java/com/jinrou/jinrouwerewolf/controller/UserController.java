@@ -213,4 +213,28 @@ public class UserController {
         return Result.success(getedUser);
     }
 
+    @PostMapping("/validateUser")
+    public Result validateUser(@RequestBody User user) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("user_id", user.getUserId());
+        User getedUser = userService.getOne(wrapper);
+        getedUser.setPassword(null);
+        boolean valid = getedUser.equals(user);
+        if(valid) {
+//            // 如果验证成功，生成 Token
+//            String token = jwtUtil.getToken(existingUser);
+//            //将token存进redis
+//            redisService.setValueBySeconds("jwt_token:" + existingUser.getUserId(), token, 604800); //7天 单位秒
+
+//            Map<String, Object> responseData = new HashMap<>();
+//            responseData.put("token", token);
+//            existingUser.setPassword(null);
+//            responseData.put("user", existingUser);
+
+            // 返回成功结果
+            return Result.success("验证成功", "验证成功");
+        }else{
+            return Result.error("本地缓存与服务器不一致，请重新登陆","本地缓存与服务器不一致，请重新登陆");
+        }
+    }
 }

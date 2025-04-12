@@ -527,7 +527,8 @@ public class GameTask implements Runnable {
                             || "占卜师".equals(player.getIdentity().getName())
                             || "灵能者".equals(player.getIdentity().getName())
                             || "猎人".equals(player.getIdentity().getName())
-                            || "共有者".equals(player.getIdentity().getName())) {
+                            || "共有者".equals(player.getIdentity().getName())
+                            || "猫又".equals(player.getIdentity().getName())) {
                         player.setResult("胜利");
                     } else {
                         player.setResult("失败");
@@ -535,7 +536,9 @@ public class GameTask implements Runnable {
                     break;
                 case "人狼":
                     if ("人狼".equals(player.getIdentity().getName())
-                            || "狂人".equals(player.getIdentity().getName())) {
+                            || "狂人".equals(player.getIdentity().getName())
+                            || "狂信者".equals(player.getIdentity().getName())
+                            || "听狂人".equals(player.getIdentity().getName())) {
                         player.setResult("胜利");
                     } else {
                         player.setResult("失败");
@@ -600,7 +603,8 @@ public class GameTask implements Runnable {
                     || name == "猫又"
                     || name == "狂人"
                     || name == "狂信者"
-                    || name == "背德者") {
+                    || name == "背德者"
+                    || name == "听狂人") {
                 murabito_num++;
             } else if (name == "妖狐") {
                 kitsune_num++;

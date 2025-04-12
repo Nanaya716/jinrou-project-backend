@@ -256,6 +256,7 @@ public class ChatController {
 
         GameTask gameTask = gameController.getGameTask(roomId);
         gameActionBody.setRoom(room);
+        System.out.println(room);
         List<Message> msgs = null;
         if (gameTask != null) {
             gameActionBody.setGameStarted(true);
@@ -279,6 +280,7 @@ public class ChatController {
              */
             switch (player.getIdentity().getName()) {
                 case "人狼":
+                case "听狂人":
                     channels = List.of("ALL", "DAYTALK", "SYSTEM", "WOLFTALK","SELFTALK");
                     break;
                 case "村人":
@@ -374,6 +376,7 @@ public class ChatController {
             }
 
         } else {
+
             msgs = messageService.loadMessagesByRoomId(roomId);
             gameActionBody.setGameStarted(false);
             if ("ENDED".equals(room.getRoomState()) || "DISCARDED".equals(room.getRoomState())) {
