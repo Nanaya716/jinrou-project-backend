@@ -809,15 +809,18 @@ public class GameTask implements Runnable {
                     .filter(player -> player.getRoomPlayerId().equals(value))
                     .findFirst()
                     .ifPresent(player -> {
-                        // 如果该玩家不在 kariudoMap 中
-                        if (!this.gameInfo.getKariudoMap().containsValue(value) || !"妖狐".equals(player.getIdentity().getName())) {
-                            this.gameInfo.getNightDeadPlayer().put(player.getRoomPlayerId(), "kami");
-                            //猫又连坐逻辑
-                            if (player.getIdentity().getName().equals("猫又")) {
-                                //被连坐者
-                                this.gameInfo.getNightDeadPlayer().put(getPlayerByRoomPlayerId(room.getPlayers(),key).getRoomPlayerId(), "neko");
+                        if (!"妖狐".equals(player.getIdentity().getName())) {
+                            // 如果该玩家不在 kariudoMap 中
+                            if (!this.gameInfo.getKariudoMap().containsValue(value)) {
+                                this.gameInfo.getNightDeadPlayer().put(player.getRoomPlayerId(), "kami");
+                                //猫又连坐逻辑
+                                if (player.getIdentity().getName().equals("猫又")) {
+                                    //被连坐者
+                                    this.gameInfo.getNightDeadPlayer().put(getPlayerByRoomPlayerId(room.getPlayers(),key).getRoomPlayerId(), "neko");
+                                }
                             }
                         }
+
                     });
         });
         this.gameInfo.getUranaiMap().forEach((key, value) -> {
